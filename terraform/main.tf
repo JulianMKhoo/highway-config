@@ -10,9 +10,9 @@ provider "helm" {
   }
 }
 
-resource "kubernetes_namespace_v1" "driveway" {
+resource "kubernetes_namespace_v1" "highway" {
   metadata {
-    name = "driveway"
+    name = "highway"
   }
 }
 
@@ -23,8 +23,8 @@ resource "helm_release" "argocd" {
   namespace        = "argocd"
   create_namespace = true
 
-  set = {
+  set = [{
     name  = "server.service.type"
     value = "NodePort"
-  }
+  }]
 }
