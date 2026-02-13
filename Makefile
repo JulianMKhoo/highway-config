@@ -3,7 +3,7 @@
 scan:
 	trufflehog filesystem . --fail
 	trufflehog git file://. --only-verified
-	checkov -d . --compact
+	checkov -d . --compact --skip-resources-without-violations
 
 tf-plan-local:
 	./bash/tf-plan-setup.sh 

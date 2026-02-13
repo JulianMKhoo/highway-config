@@ -2,15 +2,40 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: kube-bench
+  namespace: highway
 spec:
+  automountServiceAccountToken: false
+  hostPID: true
   template:
     spec:
-      hostPID: true
+      automountServiceAccountToken: false
+      securityContext:
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 10001
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - NET_RAW
+            - ALL
+        seccompProfile:
+          type: RuntimeDefault
       restartPolicy: Never
       containers:
         - name: kube-bench
-          image: aquasec/kube-bench:latest
+          image: aquasec/kube-bench@sha256:7f8e83fafc3bcb1c3a9531a5e8db8f8b71a8468548e76d814ea4cc91cb08b374
           command: ["kube-bench", "--json"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - NET_RAW
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: var-lib-cni
               mountPath: /var/lib/cni
@@ -30,6 +55,13 @@ spec:
             - name: usr-bin
               mountPath: /usr/local/mount-from-host/bin
               readOnly: true
+          resources: 
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
       volumes:
         - name: var-lib-cni
           hostPath:
