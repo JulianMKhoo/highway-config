@@ -43,8 +43,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ $STAGE == "local" ]]; then
 cd terraform || exit 1
+
+if [[ $STAGE == "local" ]]; then
 if [[ ! -d "./plan" ]]; then
     echo "No plan directory found"
     exit 1

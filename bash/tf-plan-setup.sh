@@ -26,8 +26,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+cd terraform || exit 1
+
 if [[ $STAGE == "local" ]]; then
-cd terraform
 mkdir -p ./plan 
 LAST_NUM=$(ls ./plan/tf-*.tfplan 2>/dev/null | grep -oE '[0-9]+' | sort -n | tail -1)
 NEXT_NUM=$(( ${LAST_NUM:-0} + 1 ))
