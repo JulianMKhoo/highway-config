@@ -38,10 +38,12 @@ func TestTerraformNginxService(t *testing.T) {
 	} else {
 		fmt.Println("Infrastructure already exists. Skipping Apply and running health checks...")
 	}
+	argoOptions := k8s.NewKubectlOptions("", "", "argocd")
+	k8s.RunKubectl(t, argoOptions, "wait", "--for=condition=available", "deploy/argocd-server", "--timeout=300s")
 	podFilter := metav1.ListOptions{LabelSelector: "app=nginx-highway-app"}
-	k8s.WaitUntilNumPodsCreated(t, kubeOptions, podFilter, 1, 30, 10*time.Second)
+	k8s.WaitUntilNumPodsCreated(t, kubeOptions, podFilter, 1, 60, 10*time.Second)
 	pods := k8s.ListPods(t, kubeOptions, podFilter)
-	k8s.WaitUntilPodAvailable(t, kubeOptions, pods[0].Name, 30, 10*time.Second)
+	k8s.WaitUntilPodAvailable(t, kubeOptions, pods[0].Name, 60, 10*time.Second)
 	tunnel := k8s.NewTunnel(kubeOptions, k8s.ResourceTypeService, serviceName, 0, 80)
 	defer tunnel.Close()
 	tunnel.ForwardPort(t)
