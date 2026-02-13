@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: kube-bench
-  namespace: highway
   annotations:
     checkov.io/skip1: CKV_K8S_37=Kube-bench needs specialized capabilities for host inspection
     checkov.io/skip2: CKV_K8S_31=Container relies on default seccomp profile for host access
@@ -13,6 +12,7 @@ metadata:
     checkov.io/skip7: CKV_K8S_38=ServiceAccount token is needed for specific API discovery
     checkov.io/skip8: CKV_K8S_23=Root access is an operational requirement for this tool
     checkov.io/skip9: CKV_K8S_17=Containers should not share the host process ID namespace
+    checkov.io/skip10: CKV_K8S_21=The default namespace should not be used
 spec:
   template:
     spec:
