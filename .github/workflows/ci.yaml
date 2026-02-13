@@ -51,7 +51,7 @@ jobs:
           terraform_wrapper: false
       - name: Terraform Test
         run: |
-          cd ../test/terratest
+          cd test/terratest
           go mod tidy
           go mod verify
           go mod download
