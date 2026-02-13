@@ -24,5 +24,8 @@ tf-local:
 	$(MAKE) tf-plan-local
 	$(MAKE) tf-apply-local-auto
 
+helm-render:
+	helm template nginx-highway charts/nginx-app -f charts/nginx-app/values.yaml 2>&1
+
 clean:
 	cd terraform && terraform destroy && cd ..
