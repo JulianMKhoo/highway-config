@@ -1,9 +1,9 @@
 name: Platform Guardrails
-on:
+on: 
   push:
-    branches: [ main ]
+    # branches: [ main ]
   pull_request:
-    branches: [ main ]
+    # branches: [ main ]
 
 jobs:
   security:
@@ -28,9 +28,17 @@ jobs:
         uses: helm/kind-action@v1
         with:
           cluster_name: minikube
-      - name: Terraform Make
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.4"
+          terraform_wrapper: false
+      - name: Terraform Plan
         run: |
-          make tf-plan
+          make tf-plan-local
         env:
           KUBECONFIG: ${{ github.workspace }}/.kube/config
-    
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve tfplan
+          
