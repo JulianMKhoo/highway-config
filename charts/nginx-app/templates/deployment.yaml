@@ -55,4 +55,3 @@ spec:
       volumes:
         - name: tmp-volume
           emptyDir: {}
-status: {}

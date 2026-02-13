@@ -14,5 +14,3 @@ spec:
   selector:
     app: {{ .Release.Name }}-app
   type: {{ .Values.service.type }}
-status:
-  loadBalancer: {}
