@@ -24,6 +24,10 @@ jobs:
         with:
           directory: .
           framework: terraform,kubernetes
+      - name: Create K8s Cluster (Kind)
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: minikube
       - name: Run kube-bench (Job)
         run: |
           kubectl apply -f test/kube-bench-job.yaml
@@ -42,10 +46,6 @@ jobs:
           name: kube-bench-report
           path: kube-bench-report.json
           retention-days: 5
-      - name: Create K8s Cluster (Kind)
-        uses: helm/kind-action@v1
-        with:
-          cluster_name: minikube
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
