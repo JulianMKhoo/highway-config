@@ -13,7 +13,6 @@ metadata:
     checkov.io/skip7: CKV_K8S_38=ServiceAccount token is needed for specific API discovery
     checkov.io/skip8: CKV_K8S_23=Root access is an operational requirement for this tool
 spec:
-  automountServiceAccountToken: false
   hostPID: true
   template:
     spec:
