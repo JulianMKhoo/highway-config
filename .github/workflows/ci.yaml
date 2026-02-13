@@ -31,14 +31,9 @@ jobs:
       - name: Run kube-bench (Job)
         run: |
           kubectl apply -f test/kube-bench-job.yaml
-          
           kubectl wait --for=condition=complete job/kube-bench --timeout=120s
-          
           kubectl logs job/kube-bench > kube-bench-report.json
-          
           cat kube-bench-report.json | grep "Total" || true
-        env:
-          KUBECONFIG: ${{ github.workspace }}/.kube/config
       - name: Upload kube-bench Report
         uses: actions/upload-artifact@v4
         if: always()
