@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/JulianMKhoo/highway-config.git
-    targetRevision:
+    targetRevision: HEAD
     path: charts/observability
   destination:
     server: https://kubernetes.default.svc
@@ -20,3 +20,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
