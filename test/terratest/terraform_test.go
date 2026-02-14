@@ -18,7 +18,9 @@ func TestTerraformNginxService(t *testing.T) {
 	serviceName := "nginx-highway-service"
 	output := "<h1>Welcome to nginx!</h1>"
 	kubeOptions := k8s.NewKubectlOptions("", "", "highway")
+	argoOptions := k8s.NewKubectlOptions("", "", "argocd")
 	_, getKubeErr := k8s.GetServiceE(t, kubeOptions, serviceName)
+
 	if getKubeErr != nil {
 		defer k8s.DeleteNamespace(t, kubeOptions, "argocd")
 		fmt.Println("Infrastructure not found. Running Terraform Apply...")
@@ -33,12 +35,18 @@ func TestTerraformNginxService(t *testing.T) {
 			},
 		}
 		defer terraform.Destroy(t, terraformOptions)
+
+		defer func() {
+			fmt.Println("PATCHING FINALIZERS TO FORCE DELETE...")
+			_ = k8s.RunKubectlE(t, argoOptions, "patch", "application", "observability", "-n", "argocd", "--type", "merge", "-p", "{\"metadata\":{\"finalizers\":[]}}")
+			_ = k8s.RunKubectlE(t, argoOptions, "patch", "application", "nginx-highway", "-n", "argocd", "--type", "merge", "-p", "{\"metadata\":{\"finalizers\":[]}}")
+		}()
+
 		terraform.InitAndApply(t, terraformOptions)
 		k8s.WaitUntilServiceAvailable(t, kubeOptions, serviceName, 12, 5*time.Second)
 	} else {
 		fmt.Println("Infrastructure already exists. Skipping Apply and running health checks...")
 	}
-	argoOptions := k8s.NewKubectlOptions("", "", "argocd")
 	k8s.RunKubectl(t, argoOptions, "wait", "--for=condition=available", "deploy/argocd-server", "--timeout=300s")
 
 	// Debug: dump what's actually in the cluster
