@@ -7,10 +7,16 @@ metadata:
   namespace: highway
 spec:
   ports:
-    - name: 80-8080
+    - name: http
       port: {{ .Values.service.port }}
       protocol: TCP
       targetPort: {{ .Values.service.targetPort }}
+    {{- if .Values.metrics.enabled }}
+    - name: metrics
+      port: 9113
+      protocol: TCP
+      targetPort: 9113
+    {{- end }}
   selector:
     app: {{ .Release.Name }}-app
   type: {{ .Values.service.type }}

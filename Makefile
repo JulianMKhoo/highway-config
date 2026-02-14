@@ -28,4 +28,11 @@ helm-render:
 	helm template nginx-highway charts/nginx-app -f charts/nginx-app/values.yaml 2>&1
 
 clean:
-	cd terraform && terraform destroy && kubectl delete namespace argocd && cd ..
+	@echo "=== Step 1: Removing finalizers from all ArgoCD Applications ==="
+	-kubectl get applications -n argocd -o name 2>/dev/null | xargs -I {} kubectl patch {} -n argocd --type merge -p '{"metadata":{"finalizers":[]}}' 2>/dev/null
+	@echo "=== Step 2: Terraform destroy ==="
+	cd terraform && terraform destroy
+	@echo "=== Step 3: Cleaning up leftover resources ==="
+	-kubectl delete crd -l app.kubernetes.io/part-of=argocd 2>/dev/null
+	-kubectl get ns --no-headers -o custom-columns=':metadata.name' 2>/dev/null | grep -vE '^(default|kube-system|kube-public|kube-node-lease)$$' | xargs -r kubectl delete ns 2>/dev/null
+	@echo "=== Clean complete ==="

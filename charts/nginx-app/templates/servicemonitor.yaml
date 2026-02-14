@@ -1,0 +1,20 @@
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-metrics
+  namespace: {{ .Values.namespace | default "highway" }}
+  labels:
+    app: {{ .Release.Name }}-app
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-service
+  namespaceSelector:
+    matchNames:
+      - {{ .Values.namespace | default "highway" }}
+  endpoints:
+    - port: metrics
+      interval: {{ .Values.metrics.serviceMonitor.interval }}
+      path: /metrics
+{{- end }}

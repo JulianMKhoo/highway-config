@@ -161,3 +161,14 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Prometheus metrics via nginx-prometheus-exporter sidecar
+metrics:
+  enabled: true
+  image:
+    repository: nginx/nginx-prometheus-exporter
+    tag: "1.4.1"
+    pullPolicy: IfNotPresent
+  serviceMonitor:
+    enabled: true
+    interval: 30s

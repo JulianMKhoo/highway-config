@@ -44,6 +44,11 @@ jobs:
           name: kube-bench-report
           path: kube-bench-report.json
           retention-days: 5
+      - name: Helm Dependency Update
+        run: |
+          helm version
+          cd charts/observability
+          helm dependency update
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
